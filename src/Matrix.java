@@ -3,6 +3,8 @@ public class Matrix {
 	private int numCols; //greater than 0
 	private int numRows; //greater than 0
 	private double[][] matrix; //representation of matrix, numRows x numCols
+	
+	/** Constructor: a matrix with @numRows rows and @numCols columns */
 	public Matrix (int numRows, int numCols) {
 		this.numCols = numCols;
 		this.numRows = numRows;
