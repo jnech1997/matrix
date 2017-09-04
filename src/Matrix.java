@@ -11,6 +11,132 @@ public class Matrix {
 		this.matrix = new double[numRows][numCols];
 	}
 	
+	/** Swap two rows @r1 and @r2 with matrix @matrix */
+	public static void swapRows(int r1, int r2, Matrix matrix) {
+		double[] storedRow  = matrix.matrix[r1];
+		matrix.matrix[r1] = matrix.matrix[r2];
+		matrix.matrix[r2] = storedRow;
+	}
+	
+	/** Multiple row @r by a scalar @c in matrix @matrix */ 
+	public static double[] scalMult(int r, double c, Matrix matrix) {
+		double[] scaled = new double[matrix.numCols];
+		for (int j = 0; j < matrix.numCols; j++) {
+			scaled[j] = c*matrix.matrix[r][j];
+		}
+		return scaled;
+	}
+	
+	/** Add matrix @m1 and matrix @m2 together. 
+	 * Precondition: @m1 and @m2 must have the same number of
+	 * rows and the same number of columns 
+	 * @throws ImproperMatrixDimensionException */
+	public static Matrix add(Matrix m1, Matrix m2) throws ImproperMatrixDimensionException {
+		if (m1.numCols != m2.numCols || m1.numRows != m2.numRows) {
+			throw new ImproperMatrixDimensionException();
+		}
+		Matrix added = new Matrix(m1.numRows, m1.numCols);
+		for (int i = 0; i < m1.numRows; i++) {
+			for (int j = 0; j < m2.numCols; j++) {
+				added.matrix[i][j] = m1.matrix[i][j] + m2.matrix[i][j];
+			}
+		}
+		return added;
+	}
+	
+	/** Add row @r1 and row @r2 together. 
+	 * Precondition: @r1 and @r2 must have the same number of
+	 * same number of columns 
+	 * @throws ImproperMatrixDimensionException */
+	public static double[] add(double[] r1, double[] r2) throws ImproperMatrixDimensionException {
+		if (r1.length != r2.length) {
+			throw new ImproperMatrixDimensionException();
+		}
+		double[] added = new double[r1.length];
+		for (int i = 0; i < r1.length; i++) {
+			added[i] = r1[i] + r2[i];
+		}
+		return added;
+	}
+	
+	/** Multiply matrix @m1 and matrix @m2 together. 
+	 * Precondition: the number of rows of @m2 must be
+	 * the same as the number of columns as @m1
+	 * @throws ImproperMatrixDimensionException */
+	public static Matrix multiply(Matrix m1, Matrix m2) throws ImproperMatrixDimensionException {
+		if (m2.numRows != m1.numCols) {
+			throw new ImproperMatrixDimensionException();
+		}
+		Matrix multiplied = new Matrix(m1.numRows, m2.numCols);
+		for (int i = 0; i < m1.numRows; i++) {
+			for (int k = 0; k < m2.numCols; k++) {
+				double sum = 0;
+				for (int j = 0; j < m1.numCols; j++) {
+						sum = sum + m1.matrix[i][j] * m2.matrix[j][k];
+				}
+				multiplied.matrix[i][k] = sum;
+			}
+		}
+		return multiplied;
+	}
+	
+	/** Manipulate this matrix into Echelon form
+	 * @throws ImproperMatrixDimensionException */
+	public static void reduce(Matrix matrix) throws ImproperMatrixDimensionException {
+		for (int j = 0; j < matrix.numCols; j++) {
+			boolean foundNonZero = false;
+			for (int i = j; i < matrix.numRows; i++) {
+				double val = matrix.matrix[i][j];
+				if (val != 0.0 && !foundNonZero) {
+					foundNonZero = true;
+					swapRows(i, j, matrix);
+					matrix.matrix[i] = scalMult(i, 1/val, matrix);
+					reduceElim(matrix, j,i);
+				}
+			}
+		}
+	}
+	
+	/** Helper method for reduce(Matrix matrix), which reduces a matrix into ecehlon form*/
+	public static void reduceElim(Matrix matrix, int j, int i) throws ImproperMatrixDimensionException {
+		for (int k = i+1; k < matrix.numRows;k++) {
+			double valToElim = matrix.matrix[k][j];
+			if (valToElim != 0.0) {
+				matrix.matrix[k] = add(matrix.matrix[k], scalMult(i,-1*valToElim,matrix));
+			}
+		}
+	}
+	
+	/** Helper method for rowReduce(Matrix matrix), which reduces a matrix into row echelon form*/
+	public static void rowReduceElim(Matrix matrix, int j, int i) throws ImproperMatrixDimensionException {
+		for (int k = 0; k < matrix.numRows;k++) {
+			if (k != i) {
+				double valToElim = matrix.matrix[k][j];
+				if (valToElim != 0.0) {
+					matrix.matrix[k] = add(matrix.matrix[k], scalMult(i,-1*valToElim,matrix));
+				}
+			}
+		}
+	}
+	
+	/** Manipulate this matrix into row reduced Echelon form 
+	 * @throws ImproperMatrixDimensionException */
+	public static void rowReduce(Matrix matrix) throws ImproperMatrixDimensionException {
+		for (int j = 0; j < matrix.numCols; j++) {
+			boolean foundNonZero = false;
+			for (int i = j; i < matrix.numRows; i++) {
+				double val = matrix.matrix[i][j];
+				if (val != 0.0 && !foundNonZero) {
+					foundNonZero = true;
+					swapRows(i, j, matrix);
+					matrix.matrix[i] = scalMult(i, 1/val, matrix);
+					rowReduceElim(matrix, j,i);
+				}
+			}
+		}
+		
+	}
+	
 	/** Fill this matrix with the values in matrix @matrix */
 	public void fill(double[][] matrix) {
 		if (matrix.length != numRows || matrix[0].length != numCols) {
@@ -21,8 +147,8 @@ public class Matrix {
 	
 	/** Update the value of this matrix at row @row and column @column 
 	 * with value @value */
-	public void update(int row, int column, double value) {
-		matrix[row][column] = value;
+	public static void update(int row, int column, double value, Matrix matrix) {
+		matrix.matrix[row][column] = value;
 	}
 	
 	/** Print the matrix @matrix to the console. Displays most cleanly when
@@ -61,44 +187,6 @@ public class Matrix {
 			}
 		}
 		return max;
-	}
-	
-	/** Add matrix @m1 and matrix @m2 together. 
-	 * Precondition: @m1 and @m2 must have the same number of
-	 * rows and the same number of columns 
-	 * @throws ImproperMatrixDimensionException */
-	public static Matrix add(Matrix m1, Matrix m2) throws ImproperMatrixDimensionException {
-		if (m1.numCols != m2.numCols || m1.numRows != m2.numRows) {
-			throw new ImproperMatrixDimensionException();
-		}
-		Matrix added = new Matrix(m1.numRows, m1.numCols);
-		for (int i = 0; i < m1.numRows; i++) {
-			for (int j = 0; j < m2.numCols; j++) {
-				added.matrix[i][j] = m1.matrix[i][j] + m2.matrix[i][j];
-			}
-		}
-		return added;
-	}
-	
-	/** Multiply matrix @m1 and matrix @m2 together. 
-	 * Precondition: the number of rows of @m2 must be
-	 * the same as the number of columns as @m1
-	 * @throws ImproperMatrixDimensionException */
-	public static Matrix multiply(Matrix m1, Matrix m2) throws ImproperMatrixDimensionException {
-		if (m2.numRows != m1.numCols) {
-			throw new ImproperMatrixDimensionException();
-		}
-		Matrix multiplied = new Matrix(m1.numRows, m2.numCols);
-		for (int i = 0; i < m1.numRows; i++) {
-			for (int k = 0; k < m2.numCols; k++) {
-				double sum = 0;
-				for (int j = 0; j < m1.numCols; j++) {
-						sum = sum + m1.matrix[i][j] * m2.matrix[j][k];
-				}
-				multiplied.matrix[i][k] = sum;
-			}
-		}
-		return multiplied;
 	}
 	
 	/** Main: used for writing and testing matrix methods 
@@ -175,7 +263,16 @@ public class Matrix {
 			{13.0, 14.0, 15.0, 16.0},
 			{17.0, 18.0, 19.0, 20.0},
 		});
-		print(multiply(mat9, mat10));
+		//print(multiply(mat9, mat10));
+		//print(mat9);
+		//scalMult(0, 0.0, mat9);
+		//swapRows(0,4,mat9);
+		//print(mat9);
+		//reduce(mat9);
+		//print(mat9);
+		//rowReduce(mat9);
+		//print(mat9);
+		//print(mat10);
 	}
 	
 }
