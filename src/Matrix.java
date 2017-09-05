@@ -215,13 +215,12 @@ public class Matrix {
 			{0.423, 0.544, 0.612, 0.722, 0.234, 0.212, 0.321},
 			{0.412, 0.544, 0.654, 0.787, 0.234, 0.212, 0.321}
 		});
-		/*
 		try {
 			add(mat2, mat3);
 		} catch (ImproperMatrixDimensionException e) {
 			System.out.println("caught matrix dimension exception");
 		}
-		print(add(mat3, mat4));*/
+		print(add(mat3, mat4));
 		Matrix mat5 = new Matrix(2,3);
 		mat5.fill(new double[][] {
 			{1.0, 2.0, 3.0},
@@ -233,7 +232,7 @@ public class Matrix {
 			{9.0, 10.0},
 			{11.0, 12.0}
 		});
-		//print(multiply(mat5,mat6));
+		print(multiply(mat5,mat6));
 		Matrix mat7 = new Matrix(1,1);
 		mat7.fill(new double[][] {
 			{9.0}
@@ -242,7 +241,7 @@ public class Matrix {
 		mat8.fill(new double[][] {
 			{7.0}
 		});
-		//print(multiply(mat7,mat8));
+		print(multiply(mat7,mat8));
 		Matrix mat9 = new Matrix(9,5);
 		mat9.fill(new double[][] {
 			{1.0, 2.0, 3.0, 4.0, 5.0},
@@ -263,16 +262,16 @@ public class Matrix {
 			{13.0, 14.0, 15.0, 16.0},
 			{17.0, 18.0, 19.0, 20.0},
 		});
-		//print(multiply(mat9, mat10));
-		//print(mat9);
-		//scalMult(0, 0.0, mat9);
-		//swapRows(0,4,mat9);
-		//print(mat9);
-		//reduce(mat9);
-		//print(mat9);
-		//rowReduce(mat9);
-		//print(mat9);
-		//print(mat10);
+		Matrix mat11 = new Matrix(3,4);
+		mat11.fill(new double[][] {
+			{4.0, -5.0, 3.0, 2.0},
+			{1.0, -1.0, -2.0, -6.0},
+			{4.0, -4.0, -14.0, 18.0}
+		});
+		print(mat11);
+		reduce(mat11);
+		print(mat11);
+		rowReduce(mat11);
+		print(mat11);
 	}
-	
 }
