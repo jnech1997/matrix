@@ -135,6 +135,12 @@ public class Matrix {
 				}
 			}
 		}
+		//get all zero row to the bottom of the matrix
+		for (int i = 0; i < numRows; i++) {
+			for (int j = 0; j < numCols; j++) {
+				
+			}
+		}
 	}
 	
 	/** Manipulate this matrix into row reduced Echelon form 
@@ -146,13 +152,20 @@ public class Matrix {
 				double val = matrix[i][j];
 				if (val != 0.0 && !foundNonZero) {
 					foundNonZero = true;
+					System.out.println("j is " + j);
 					swapRows(i, j);
 					matrix[j] = scaleRow(j, 1/val);
+					reduceElim(j,i);
 					rowReduceElim(j,i);
 				}
 			}
 		}
-		
+		//get all zero row to the bottom of the matrix
+		for (int i = 0; i < numRows; i++) {
+			for (int j = 0; j < numCols; j++) {
+				
+			}
+		}
 	}
 	
 	/** Return true if this matrix is equal to the
@@ -238,10 +251,18 @@ public class Matrix {
 	public static void main(String args[]) throws ImproperMatrixDimensionException {
 		int numC = 4;
 		int numR = 2;
-		Matrix mat = new Matrix(numR, numC);
+		Matrix mat = new Matrix(4, 5);
 		mat.fill(new double[][] {
-			{0.0, 0.1, 0.2, 0.3},
-			{0.4, 0.5, 0.6, 0.7},
+			{0.0, -3.0, -6.0, 4.0, 9.0},
+			{-1.0, -2.0, -1.0, 3.0, 1.0},
+			{-2.0, -3.0, 0.0, 3.0, -1.0},
+			{1.0, 4.0, 5.0, -9.0, -7.0}
 		});
+		mat.print();
+		//mat.reduce();
+		mat.rowReduce();
+		mat.round(2);
+		mat.print();
 	}
+	
 }
