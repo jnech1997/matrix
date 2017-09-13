@@ -5,6 +5,25 @@ import org.junit.Test;
 public class MatrixTest {
 	
 	@Test
+	public void testIsAugMatIndependent() throws ImproperMatrixDimensionException {
+		Matrix mat0 = new Matrix(3,3);
+		mat0.fill(new double[][] {
+			{0.0, 1.0, 1.0},
+			{2.0, 0.0, -1.0},
+			{0.0, -1.0, 0.0}
+		});
+		assertEquals(false, mat0.isIndependent());
+		Matrix mat1 = new Matrix(4, 5);
+		mat1.fill(new double[][] {
+			{0.0, -3.0, -6.0, 4.0, 9.0},
+			{-1.0, -2.0, -1.0, 3.0, 1.0},
+			{-2.0, -3.0, 0.0, 3.0, -1.0},
+			{1.0, 4.0, 5.0, -9.0, -7.0}
+		});
+		assertEquals(false, mat1.isIndependent());
+	}
+	
+	@Test
 	public void testIsAugMatConsistent() throws ImproperMatrixDimensionException {
 		Matrix mat0 = new Matrix(3,3);
 		mat0.fill(new double[][] {

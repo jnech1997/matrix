@@ -140,7 +140,7 @@ public class Matrix {
 	
 	/** Manipulate this matrix into row reduced Echelon form 
 	 * @throws ImproperMatrixDimensionException */
-	public void rowReduce() throws ImproperMatrixDimensionException {
+	public List<PivotPosition> rowReduce() throws ImproperMatrixDimensionException {
 		reduce();
 		List<PivotPosition> pivots = new ArrayList<PivotPosition>();
 		for (int j = 0; j < numCols; j++) {
@@ -157,6 +157,7 @@ public class Matrix {
 			}
 		}
 		bubbleZeroes();
+		return pivots;
 	}
 	
 	/**Returns true if the reduced echelon form of 
@@ -174,6 +175,18 @@ public class Matrix {
 			}
 		}
 		return true;
+	}
+	
+	/** Returns true if the reduced row echelon form of 
+	 * this augmented matrix is linearly independent 
+	 * @throws ImproperMatrixDimensionException */
+	public boolean isIndependent() throws ImproperMatrixDimensionException {
+		List<PivotPosition> pivots = rowReduce();
+		System.out.println(pivots.size());
+		if (pivots.size() == numCols-1) {
+			return true;
+		}
+		else {return false;}
 	}
 	
 	/**Find all rows of zeroes in this matrix 
@@ -295,9 +308,9 @@ public class Matrix {
 			{-1.0, -2.0, -1.0, 3.0, 1.0}
 		});
 		matTestZeroes.bubbleZeroes();
-		matTestZeroes.print();
+		//matTestZeroes.print();
 		//mat.reduce();
-		mat.rowReduce();
+		mat.isIndependent();
 		mat.round(3);
 		mat.print();
 	}
@@ -308,14 +321,6 @@ public class Matrix {
 		public PivotPosition(int i, int j) {
 			this.i = i;
 			this.j = j;
-		}
-		
-		public int getRow() {
-			return i;
-		}
-		
-		public int getColumn() {
-			return j;
 		}
 	}
 	
