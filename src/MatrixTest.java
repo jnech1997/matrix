@@ -122,7 +122,7 @@ public class MatrixTest {
 			{7.0, -1.0, 6.0, 11.0}
 		});
 		mat1.rowReduce();
-		mat1.round(2);
+		mat1.round();
 		mat1.print();
 		Matrix mat1Wolf = new Matrix (3,4);
 		mat1Wolf.fill(new double[][] {

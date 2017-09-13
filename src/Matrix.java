@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Matrix {
 	private int numCols; //greater than 0
@@ -135,35 +138,40 @@ public class Matrix {
 				}
 			}
 		}
-		//get all zero row to the bottom of the matrix
-		for (int i = 0; i < numRows; i++) {
-			for (int j = 0; j < numCols; j++) {
-				
-			}
-		}
 	}
 	
 	/** Manipulate this matrix into row reduced Echelon form 
 	 * @throws ImproperMatrixDimensionException */
 	public void rowReduce() throws ImproperMatrixDimensionException {
+		reduce();
+		List<MatrixPosition> pivots = new ArrayList<MatrixPosition>();
 		for (int j = 0; j < numCols; j++) {
 			boolean foundNonZero = false;
 			for (int i = j; i < numRows; i++) {
 				double val = matrix[i][j];
 				if (val != 0.0 && !foundNonZero) {
 					foundNonZero = true;
-					System.out.println("j is " + j);
+					pivots.add(new MatrixPosition(i,j));
 					swapRows(i, j);
 					matrix[j] = scaleRow(j, 1/val);
-					reduceElim(j,i);
 					rowReduceElim(j,i);
 				}
 			}
 		}
 		//get all zero row to the bottom of the matrix
 		for (int i = 0; i < numRows; i++) {
+			this.round();
+			boolean allZeroes = true;
 			for (int j = 0; j < numCols; j++) {
-				
+				if (matrix[i][j] != 0.0) {allZeroes = false;}
+			}
+			if (allZeroes) {
+				//bubble row of all zeroes down
+				int swap= i;
+				while (swap < numRows -1) {
+					swapRows(swap, swap + 1);
+					swap++;
+				}
 			}
 		}
 	}
@@ -239,10 +247,10 @@ public class Matrix {
 	}
 	
 	/** Round the values of this matrix to n decimal places */
-	public void round(int n) {
+	public void round() {
 		for (int i = 0; i<numRows; i++) {
 			for (int j = 0; j<numCols; j++) {
-				matrix[i][j] = Math.round((matrix[i][j] * Math.pow(10, n))/Math.pow(10, n));			}
+				matrix[i][j] = Math.round((matrix[i][j] * 1.0))/1.0;			}
 		}
 	}
 	
@@ -259,10 +267,27 @@ public class Matrix {
 			{1.0, 4.0, 5.0, -9.0, -7.0}
 		});
 		mat.print();
-		//mat.reduce();
+		mat.round();
+		mat.reduce();
 		mat.rowReduce();
-		mat.round(2);
 		mat.print();
+	}
+	
+	private static class MatrixPosition {
+		public int i; //denotes the row of this matrix position
+		public int j; //denotes the column of this matrix position
+		public MatrixPosition(int i, int j) {
+			this.i = i;
+			this.j = j;
+		}
+		
+		public int getRow() {
+			return i;
+		}
+		
+		public int getColumn() {
+			return j;
+		}
 	}
 	
 }
