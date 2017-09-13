@@ -105,7 +105,7 @@ public class Matrix {
 		for (int k = i+1; k < numRows;k++) {
 			double valToElim = matrix[k][j];
 			if (valToElim != 0.0) {
-				matrix[k] = add(matrix[k], scaleRow(i,-1*valToElim));
+				matrix[k] = add(matrix[k], scaleRow(j,-1.0*valToElim));
 			}
 		}
 	}
@@ -117,7 +117,7 @@ public class Matrix {
 			if (k != i) {
 				double valToElim = matrix[k][j];
 				if (valToElim != 0.0) {
-					matrix[k] = add(matrix[k], scaleRow(i,-1*valToElim));
+					matrix[k] = add(matrix[k], scaleRow(j,-1.0*valToElim));
 				}
 			}
 		}
@@ -159,8 +159,8 @@ public class Matrix {
 			}
 		}
 		//get all zero row to the bottom of the matrix
+		this.round();
 		for (int i = 0; i < numRows; i++) {
-			this.round();
 			boolean allZeroes = true;
 			for (int j = 0; j < numCols; j++) {
 				if (matrix[i][j] != 0.0) {allZeroes = false;}
@@ -250,7 +250,7 @@ public class Matrix {
 	public void round() {
 		for (int i = 0; i<numRows; i++) {
 			for (int j = 0; j<numCols; j++) {
-				matrix[i][j] = Math.round((matrix[i][j] * 1.0))/1.0;			}
+				matrix[i][j] = Math.round((matrix[i][j] * 1000.0))/1000.0;			}
 		}
 	}
 	
@@ -266,10 +266,9 @@ public class Matrix {
 			{-2.0, -3.0, 0.0, 3.0, -1.0},
 			{1.0, 4.0, 5.0, -9.0, -7.0}
 		});
-		mat.print();
-		mat.round();
-		mat.reduce();
+		//mat.reduce();
 		mat.rowReduce();
+		mat.round();
 		mat.print();
 	}
 	
