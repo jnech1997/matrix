@@ -182,7 +182,6 @@ public class Matrix {
 	 * @throws ImproperMatrixDimensionException */
 	public boolean isIndependent() throws ImproperMatrixDimensionException {
 		List<PivotPosition> pivots = rowReduce();
-		System.out.println(pivots.size());
 		if (pivots.size() == numCols-1) {
 			return true;
 		}
@@ -238,6 +237,37 @@ public class Matrix {
 	 * with value @value */
 	public void update(int row, int column, double value) {
 		matrix[row][column] = value;
+	}
+	
+	/**Print this augemented matrix as a linear combination of 
+	 * unknown variables */
+	public void printAsLinearCombination() {
+		for (int j = 0; j < numCols; j++) {
+			System.out.print("x" + j);
+			System.out.print("[ ");
+			for (int i = 0; i < numRows; i++) {
+				if (i != numRows-1) {
+					System.out.print(matrix[i][j] + ", ");
+				}
+				else {
+					System.out.print(matrix[i][j]);
+				}
+			}
+			System.out.print("]");
+			if (j != numCols-1) {
+				System.out.println(" +");
+			}
+		}
+		System.out.print(" = [ ");
+		for (int i = 0; i < numRows; i++) {
+			if (i != numRows-1) {
+				System.out.print(matrix[i][numCols-1] + ", ");
+			}
+			else {
+				System.out.print(matrix[i][numCols-1]);
+			}
+		}
+		System.out.print("]");
 	}
 	
 	/** Print this matrix to the console. Displays most cleanly when
@@ -312,7 +342,8 @@ public class Matrix {
 		//mat.reduce();
 		mat.isIndependent();
 		mat.round(3);
-		mat.print();
+		//mat.print();
+		mat.printAsLinearCombination();
 	}
 	
 	private static class PivotPosition {
