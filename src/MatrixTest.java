@@ -5,6 +5,48 @@ import org.junit.Test;
 public class MatrixTest {
 	
 	@Test
+	public void testIsAugMatConsistent() throws ImproperMatrixDimensionException {
+		Matrix mat0 = new Matrix(3,3);
+		mat0.fill(new double[][] {
+			{0.0, 1.0, 1.0},
+			{2.0, 0.0, -1.0},
+			{0.0, -1.0, 0.0}
+		});
+		assertEquals(false, mat0.isConsistent());
+		Matrix mat1 = new Matrix(4, 5);
+		mat1.fill(new double[][] {
+			{0.0, -3.0, -6.0, 4.0, 9.0},
+			{-1.0, -2.0, -1.0, 3.0, 1.0},
+			{-2.0, -3.0, 0.0, 3.0, -1.0},
+			{1.0, 4.0, 5.0, -9.0, -7.0}
+		});
+		assertEquals(true, mat1.isConsistent());
+	}
+	
+	@Test
+	public void testBubbleZeroes() {
+		Matrix mat = new Matrix(6,5);
+		mat.fill(new double[][] {
+			{0.0, 0.0, 0.0, 0.0, 0.0},
+			{0.0, -3.0, -6.0, 4.0, 9.0},
+			{0.0, 0.0, 0.0, 0.0, 0.0},
+			{-1.0, -2.0, -1.0, 3.0, 1.0},
+			{0.0, 0.0, 0.0, 0.0, 0.0},
+			{-1.0, -2.0, -1.0, 3.0, 1.0}
+		});
+		mat.bubbleZeroes();
+		Matrix matBubbled = new Matrix(6,5);
+		matBubbled.fill(new double[][] {
+			{0.0, -3.0, -6.0, 4.0, 9.0},
+			{-1.0, -2.0, -1.0, 3.0, 1.0},
+			{-1.0, -2.0, -1.0, 3.0, 1.0},
+			{0.0, 0.0, 0.0, 0.0, 0.0},
+			{0.0, 0.0, 0.0, 0.0, 0.0},
+			{0.0, 0.0, 0.0, 0.0, 0.0}
+		});
+	}
+	
+	@Test
 	public void testSwap() {
 		Matrix matOneByOne = new Matrix(1,1);
 		matOneByOne.fill(new double[][] {
@@ -122,7 +164,7 @@ public class MatrixTest {
 			{7.0, -1.0, 6.0, 11.0}
 		});
 		mat1.rowReduce();
-		mat1.round();
+		mat1.round(3);
 		mat1.print();
 		Matrix mat1Wolf = new Matrix (3,4);
 		mat1Wolf.fill(new double[][] {

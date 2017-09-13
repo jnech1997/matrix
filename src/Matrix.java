@@ -101,8 +101,8 @@ public class Matrix {
 	
 	/** Helper method for reduce(), which reduces a matrix into ecehlon form
 	 * @j is the column of matrix being worked on, @j is the row of the matrix being worked on*/
-	public void reduceElim(int j, int i) throws ImproperMatrixDimensionException {
-		for (int k = i+1; k < numRows;k++) {
+	public void reduceElim(int i, int j) throws ImproperMatrixDimensionException {
+		for (int k = i+1; k < numRows; k++) {
 			double valToElim = matrix[k][j];
 			if (valToElim != 0.0) {
 				matrix[k] = add(matrix[k], scaleRow(j,-1.0*valToElim));
@@ -112,13 +112,11 @@ public class Matrix {
 	
 	/** Helper method for rowReduce(), which reduces a matrix into row echelon form
 	 * @j is the column of matrix being worked on, @j is the row of the matrix being worked on*/
-	public void rowReduceElim(int j, int i) throws ImproperMatrixDimensionException {
-		for (int k = 0; k < numRows;k++) {
-			if (k != i) {
-				double valToElim = matrix[k][j];
-				if (valToElim != 0.0) {
-					matrix[k] = add(matrix[k], scaleRow(j,-1.0*valToElim));
-				}
+	public void rowReduceElim(int i, int j) throws ImproperMatrixDimensionException {
+		for (int k = i-1; k > -1; k--) {
+			double valToElim = matrix[k][j];
+			if (valToElim != 0.0) {
+				matrix[k] = add(matrix[k], scaleRow(j,-1.0*valToElim));
 			}
 		}
 	}
@@ -134,7 +132,7 @@ public class Matrix {
 					foundNonZero = true;
 					swapRows(i, j);
 					matrix[j] = scaleRow(j, 1/val);
-					reduceElim(j,i);
+					reduceElim(i,j);
 				}
 			}
 		}
@@ -144,29 +142,50 @@ public class Matrix {
 	 * @throws ImproperMatrixDimensionException */
 	public void rowReduce() throws ImproperMatrixDimensionException {
 		reduce();
-		List<MatrixPosition> pivots = new ArrayList<MatrixPosition>();
+		List<PivotPosition> pivots = new ArrayList<PivotPosition>();
 		for (int j = 0; j < numCols; j++) {
 			boolean foundNonZero = false;
 			for (int i = j; i < numRows; i++) {
 				double val = matrix[i][j];
 				if (val != 0.0 && !foundNonZero) {
 					foundNonZero = true;
-					pivots.add(new MatrixPosition(i,j));
+					pivots.add(new PivotPosition(i,j));
 					swapRows(i, j);
 					matrix[j] = scaleRow(j, 1/val);
-					rowReduceElim(j,i);
+					rowReduceElim(i,j);
 				}
 			}
 		}
-		//get all zero row to the bottom of the matrix
-		this.round();
+		bubbleZeroes();
+	}
+	
+	/**Returns true if the reduced echelon form of 
+	 * this augmented matrix is consistent 
+	 * @throws ImproperMatrixDimensionException */
+	public boolean isConsistent() throws ImproperMatrixDimensionException {
+		rowReduce();
+		for (int i = 0; i < numRows; i++) {
+			boolean coefficientZeroes = true;
+			for (int j = 0; j < numCols - 1; j++) {
+				if (matrix[i][j] != 0) {coefficientZeroes = false;}
+			}
+			if (coefficientZeroes && matrix[i][numCols-1] != 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**Find all rows of zeroes in this matrix 
+	 * and move them down to the bottom of the matrix */
+	public void bubbleZeroes() {
 		for (int i = 0; i < numRows; i++) {
 			boolean allZeroes = true;
 			for (int j = 0; j < numCols; j++) {
 				if (matrix[i][j] != 0.0) {allZeroes = false;}
 			}
 			if (allZeroes) {
-				//bubble row of all zeroes down
+				//bubble the row of all zeroes down
 				int swap= i;
 				while (swap < numRows -1) {
 					swapRows(swap, swap + 1);
@@ -247,10 +266,10 @@ public class Matrix {
 	}
 	
 	/** Round the values of this matrix to n decimal places */
-	public void round() {
+	public void round(int n) {
 		for (int i = 0; i<numRows; i++) {
 			for (int j = 0; j<numCols; j++) {
-				matrix[i][j] = Math.round((matrix[i][j] * 1000.0))/1000.0;			}
+				matrix[i][j] = Math.round((matrix[i][j] * Math.pow(10, n)))/(Math.pow(10, n));			}
 		}
 	}
 	
@@ -266,16 +285,27 @@ public class Matrix {
 			{-2.0, -3.0, 0.0, 3.0, -1.0},
 			{1.0, 4.0, 5.0, -9.0, -7.0}
 		});
+		Matrix matTestZeroes = new Matrix(6,5);
+		matTestZeroes.fill(new double[][] {
+			{0.0, 0.0, 0.0, 0.0, 0.0},
+			{0.0, -3.0, -6.0, 4.0, 9.0},
+			{0.0, 0.0, 0.0, 0.0, 0.0},
+			{-1.0, -2.0, -1.0, 3.0, 1.0},
+			{0.0, 0.0, 0.0, 0.0, 0.0},
+			{-1.0, -2.0, -1.0, 3.0, 1.0}
+		});
+		matTestZeroes.bubbleZeroes();
+		matTestZeroes.print();
 		//mat.reduce();
 		mat.rowReduce();
-		mat.round();
+		mat.round(3);
 		mat.print();
 	}
 	
-	private static class MatrixPosition {
+	private static class PivotPosition {
 		public int i; //denotes the row of this matrix position
 		public int j; //denotes the column of this matrix position
-		public MatrixPosition(int i, int j) {
+		public PivotPosition(int i, int j) {
 			this.i = i;
 			this.j = j;
 		}
